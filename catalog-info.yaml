@@ -1,0 +1,33 @@
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: ark-poc-api
+  description: A simple backend service for the Ark POC frontend project.
+  title: Ark POC API
+  tags:
+    - typescript
+    - node
+    - express
+  annotations:
+    github.com/project-slug: "thaboRach/ark-poc-api"
+spec:
+  type: openapi
+  lifecycle: production
+  owner: backend-team
+  system: microservices
+  definition: |
+    openapi: "3.0.0"
+    info:
+      version: 1.0.0
+      title: Ark POC API
+      license: 
+        name: MIT
+      servers:
+        - url: http://localhost:3000/v1
+      paths:
+        /register:
+          post:
+            summary: Register a new user
+        /login:
+          post:
+            summary: Login a user
