@@ -14,38 +14,50 @@ A simple backend service for the Ark POC frontend project.
 
 To get a local copy up and running follow these simple example steps.
 
-### Yarn
+- Clone the repository
+
+  ```bash
+   git clone https://github.com/thaboRach/ark-poc-api.git
+  ```
+
+- Ensure you create a `.env` file with the following environment variables
+
+  ```bash
+   POSTGRES_USER=arkpoc
+   POSTGRES_PASSWORD=supersecret
+   POSTGRES_DB=arkpoc
+   DATABASE_URL=postgres://arkpoc:supersecret@localhost:5432/arkpoc
+   NODE_ENV=development
+  ```
+
+### Docker (optional but recommended)
+
+1. Start the container
+
+   ```bash
+      docker compose up
+   ```
+
+### Without Docker
+
+Ensure you have [postgresql](https://www.postgresql.org/download/) installed on your machine.
+
+#### Yarn
 
 ```bash
-    npm install --global yarn
+   npm install --global yarn
 ```
 
-### Installation
-
-1. Clone the repository
+1. Install the required packages
 
    ```bash
-   git clone
+      yarn
    ```
 
-2. Install the required packages
+2. Run the database migrations (This will allow the database to sync with the schema)
 
    ```bash
-   yarn
-   ```
-
-3. Ensure you set your environment variables:
-
-   ```bash
-      PORT=8000
-      DATABASE_URL=file:./db/dev.db
-      JWT_SECRET="jwtsecret"
-   ```
-
-4. Run the database migrations
-
-   ```bash
-   npx prisma migrate dev
+      npx prisma migrate dev
    ```
 
 ## Usage
@@ -53,5 +65,5 @@ To get a local copy up and running follow these simple example steps.
 Start the server locally:
 
 ```bash
-yarn dev
+   yarn dev
 ```
