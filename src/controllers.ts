@@ -1,8 +1,8 @@
 import asyncHandler from "express-async-handler";
 import bcrypt from "bcryptjs";
 
-import { createUser, getUser } from "./queries.js";
-import { generateToken } from "./utils/token.js";
+import { createUser, getUser } from "./queries";
+import { generateToken } from "./utils/token";
 
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password, dob, preferred_coding_language } = req.body;

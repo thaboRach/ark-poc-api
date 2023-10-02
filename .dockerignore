@@ -1,0 +1,17 @@
+node_modules
+
+.git
+.gitignore
+Dockerfile
+.dockerignore
+
+artifacts
+dist
+
+.vscode
+
+logs
+*.logs
+
+.tmp
+.temp
