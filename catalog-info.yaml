@@ -10,8 +10,9 @@ metadata:
     - express
   annotations:
     github.com/project-slug: "thaboRach/ark-poc-api"
-  spec:
-    type: service
-    lifecycle: production
-    owner: backend-team
-    system: micro-services
+spec:
+  type: service
+  lifecycle: production
+  owner: backend-team
+  system: micro-services
+  apiConsumedBy: ["component:ark-poc"]
