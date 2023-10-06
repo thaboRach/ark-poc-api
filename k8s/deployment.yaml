@@ -1,0 +1,164 @@
+# Backstage namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: backstage-ns
+
+---
+# Node.js Express Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ark-api
+  namespace: backstage-ns
+spec:
+  replicas: 2 # Number of desired pods
+  selector:
+    matchLabels:
+      app: ark-app
+  template:
+    metadata:
+      labels:
+        app: ark-app
+    spec:
+      containers:
+        - name: ark-app
+          image: thaborach/ark-poc
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 7007 # Port app is listening on
+          env:
+            - name: DB_HOST
+              value: postgresql-service
+            - name: DATABASE_URL
+              value: postgres://arkpoc:$arkpocpassword@postgresql-service:5432/$arkpoc
+---
+# PostgreSQL Database Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgresql
+  namespace: backstage-ns
+spec:
+  replicas: 1 # One database instance
+  selector:
+    matchLabels:
+      app: postgresql
+  template:
+    metadata:
+      labels:
+        app: postgresql
+    spec:
+      containers:
+        - name: postgresql
+          image: postgres:latest # Use the PostgreSQL image
+          resources:
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          ports:
+            - containerPort: 5432 # PostgreSQL default port
+          env:
+            - name: POSTGRES_DB
+              value: arkpoc
+            - name: POSTGRES_USER
+              value: arkpoc
+            - name: POSTGRES_PASSWORD
+              value: arkpocpassword
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql-service
+  namespace: backstage-ns
+spec:
+  selector:
+    app: postgresql
+  ports:
+    - protocol: TCP
+      port: 5432 # The port PostgreSQL database is listening on
+  type: ClusterIP
+
+---
+# Persistent Volume (PV) for postgresSQL
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgresql-pv
+  namespace: backstage-ns
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: slow
+  hostPath:
+    path: /your/host/path
+
+---
+# Persistent Volume Claim (PVC) for PostgreSQL
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgresql-pvc
+  namespace: backstage-ns
+spec:
+  resources:
+    requests:
+      storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: slow
+
+---
+# Service Account for Backstage
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: backstage-service-account
+  namespace: backstage-ns
+
+---
+# Role for the Backstage Service Account
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: backstage-ns
+  name: backstage-role
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "services", "configmaps", "secrets"]
+    verbs: ["get", "list", "watch", "create", "update", "delete"]
+
+---
+# RoleBinding for the Backstage Service Account and Role
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: backstage-role-binding
+  namespace: backstage-ns
+subjects:
+  - kind: ServiceAccount
+    name: backstage-service-account
+roleRef:
+  kind: Role
+  name: backstage-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# Create a long-lived API token for Backstage service account
+apiVersion: v1
+kind: Secret
+metadata:
+  name: backstage-service-account-secret
+  namespace: backstage-ns
+  annotations:
+    kubernetes.io/service-account.name: backstage-service-account
+type: kubernetes.io/service-account-token

@@ -10,6 +10,12 @@ A simple backend service for the Ark POC frontend project.
 - Express
 - Prisma
 
+## Prerequisites
+
+- Node and NPM
+- Yarn
+- Docker & Kubernetes
+
 ## Getting started
 
 To get a local copy up and running follow these simple example steps.
@@ -67,3 +73,55 @@ Start the server locally:
 ```bash
    yarn dev
 ```
+
+## Local Kubernetes cluster
+
+Ensure you have installed [Kind](https://kind.sigs.k8s.io/#installation-and-usage) on your machine.
+
+1. Create the cluster:
+
+   ```bash
+      kind create cluster --config=./k8s/config.yaml
+   ```
+
+2. Use the cluster:
+
+   ```bash
+      kubectl cluster-info --context kind-ark-poc-cluster
+   ```
+
+3. Apply the deployment configuration:
+
+   ```bash
+      kubectl apply -f ./k8s/deployment.yaml
+   ```
+
+4. Check that the namespace has been created:
+
+   ```bash
+       kubectl get namespaces
+   ```
+
+5. Set the namespace as the active
+
+   ```bash
+      kubectl config set-context --current --namespace=backstage-ns
+   ```
+
+6. Show the contexts:
+
+   ```bash
+      kubectl config get-contexts
+   ```
+
+7. Check the status of your pods:
+
+   ```bash
+      kubectl get pods
+   ```
+
+- To stop and delete the cluster
+
+  ```bash
+      kind delete cluster --name ark-poc-cluster
+  ```
