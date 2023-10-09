@@ -105,7 +105,7 @@ Ensure you have installed [Kind](https://kind.sigs.k8s.io/#installation-and-usag
 5. Set the namespace as the active
 
    ```bash
-      kubectl config set-context --current --namespace=backstage-ns
+      kubectl config set-context --current --namespace=ark-app-ns
    ```
 
 6. Show the contexts:
