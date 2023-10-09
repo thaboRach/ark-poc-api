@@ -10,7 +10,9 @@ metadata:
     - express
   annotations:
     github.com/project-slug: "thaboRach/ark-poc-api"
-    backstage.io/kubernetes-id: ark-app
+    backstage.io/kubernetes-id: ark-poc-cluster
+    backstage.io/kubernetes-namespace: ark-app-ns
+    backstage.io/kubernetes-label-selector: "app=ark-app"
 spec:
   type: service
   lifecycle: production
